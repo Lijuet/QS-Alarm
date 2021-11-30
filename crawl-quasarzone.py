@@ -5,6 +5,10 @@ import time
 from bs4 import BeautifulSoup as bs
 import telegram
 
+import secrets
+
+
+key = secrets.key
 bot = telegram.Bot(token=key)
 
 target = {
@@ -46,13 +50,11 @@ def search_target(type):
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
                 'referer': 'referer: https://quasarzone.com/bbs/qb_saleinfo?_method=post&type=&page=1&_token=Q7kaCjkdlWWa9Q6lPxPZopa4URVoxDkq4VKwgCFM&category=&popularity=&kind=subject&keyword=3060+ti&sort=num%2C+reply&direction=DESC'}
 
+    items_info = []
     try:
         page = requests.get(search_url, headers=headers)
         html = bs(page.text, "html.parser")
         items = html.select('div.market-info-list-cont')
-
-        print("Search [{}] {}".format(type, formatted_target))
-        items_info = []
         
         for item in items:
             name = item.select_one('span.ellipsis-with-reply-cnt').text
@@ -61,7 +63,7 @@ def search_target(type):
             release_date = reformat_date(item)
             cost = int(''.join(filter(str.isdigit, item.select_one('span.text-orange').text)))
 
-        if status != '종료' \
+            if status != '종료' \
                 and '품절' not in name \
                 and release_date > date.today() - timedelta(days=7) \
                 and cost < target_maximum_cost:
@@ -74,9 +76,9 @@ def search_target(type):
                         'link':"https://quasarzone.com"+link,
                     }
                 items_info.append(item_info)
+
     except Exception as e:
         print("Error : ", e)
-        return None
 
     return items_info
 
@@ -84,7 +86,7 @@ def search_target(type):
 def repeat_searching():
     repeat = True
     while repeat:
-        time.sleep(5)
+        time.sleep(1)
         print("We will search {}".format(list(target.keys())))
         for type in target.keys():
             print("Search [{}] {}".format(type, target[type]['name']), end=" ")
@@ -92,7 +94,6 @@ def repeat_searching():
             if result: 
                 try:
                     send_message(result)
-                    repeat = False
                 except Exception as e:
                     print("Error : ", e)
                 finally:
