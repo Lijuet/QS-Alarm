@@ -14,13 +14,30 @@ bot = telegram.Bot(token=key)
 target = {
     'cpu':{
         'name':'5600x',
-        'maximum_cost': 290000,
+        'maximum_cost': 250000,
     },
     'gpu':{
-        'name':'3060 ti',
-        'maximum_cost': 7000000,
+        'name':'3060ti',
+        'maximum_cost': 840000,
     },
 }
+
+# ram':{
+#         'name':'ddr4 16',
+#         'maximum_cost': 80000,
+#     },
+#     'ssd':{
+#         'name':'ssd 1t',
+#         'maximum_cost': 80000,
+#     },
+#     'cooler':{
+#         'name':'ddr4 16',
+#         'maximum_cost': 80000,
+#     },
+#     'case':{
+#         'name':'ddr4 16',
+#         'maximum_cost': 80000,
+#     }
 
 def reformat_date(item):
     release_date = item.select_one('span.date').text
